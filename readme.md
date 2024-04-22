@@ -1,6 +1,6 @@
 # Application-Gestion-des-Apprenants
 
-Connexion
+Connexion et déconnexion
 
 En fonction de notre rôle (formateur ou apprenant) on arrive sur un dashboard différent.
 
