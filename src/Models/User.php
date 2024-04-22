@@ -1,9 +1,11 @@
 <?php
 namespace src\Models;
+
 use src\Services\Hydratation;
 
 
-class User {
+class User
+{
 
     private $IdUser;
     private $Nom;
@@ -16,7 +18,7 @@ class User {
     use Hydratation;
 
 
-    
+
 
     /**
      * Get the value of IdUser

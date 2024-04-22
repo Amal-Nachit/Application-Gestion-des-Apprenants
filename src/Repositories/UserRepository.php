@@ -39,6 +39,7 @@ class UserRepository
         }
     }
 
+
     public function userExist(User $user)
     {
         $sql = "SELECT * FROM aga_user WHERE Email = :Email";
@@ -53,29 +54,27 @@ class UserRepository
         }
     }
 
-    public function getThisUser($email): User|bool
+    public function getUserByEmail($email): User|bool
     {
-        $sql = "SELECT * FROM aga_user WHERE Email = :Email";
+        try {
+            $sql = "SELECT * FROM aga_user WHERE Email = :Email";
+            $stmt = $this->DB->prepare($sql);
+            $stmt->execute([':Email' => $email]);
 
-        $stmt = $this->DB->prepare($sql);
-        $stmt->bindParam(':Email', $email);
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
-        $retour = $stmt->fetch();
-        
-        if ($retour) {
-            return $retour;
-        } else {
-            return false;
+            $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
+
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            throw new \Exception('Erreur de récupération d\'un utilisateur par son email : ' . $e->getMessage());
         }
     }
 
-    public function getThisUserById($id): User|bool
+    public function getUserById($IdUser): User|bool
     {
-        $sql = "SELECT * FROM aga_user WHERE Id = :Id";
+        $sql = "SELECT * FROM aga_user WHERE IdUser = :IdUser";
 
         $stmt = $this->DB->prepare($sql);
-        $stmt->bindParam(':Id', $id);
+        $stmt->bindParam(':IdUser', $IdUser);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
         $retour = $stmt->fetch();
@@ -83,9 +82,9 @@ class UserRepository
         return $retour;
     }
 
-    public function getThisUserByRole($IdRoleUser)
+    public function getUserByRole($IdRoleUser): User
     {
-        try {
+
             $sql = "SELECT * FROM aga_user WHERE IdRoleUser = :IdRoleUser";
             $stmt = $this->DB->prepare($sql);
             $stmt->bindParam(':IdRoleUser', $IdRoleUser);
@@ -94,14 +93,9 @@ class UserRepository
             $retour = $stmt->fetch();
 
             return $retour;
-        } catch (PDOException $e) {
-            // Gestion des erreurs de base de données
-            echo "Erreur de base de données : " . $e->getMessage();
-            return null;
-        }
     }
 
-    public function updateThisUser(User $user): bool
+    public function updateUser(User $user): bool
     {
         $sql = "UPDATE aga_user 
 
@@ -122,17 +116,33 @@ class UserRepository
     }
 
 
-    public function deleteThisUser(int $id): bool
+    public function deleteUser(int $IdUser): bool
     {
         try {
             $sql = "DELETE FROM aga_user WHERE IdUser = :IdUser;";
 
             $stmt = $this->DB->prepare($sql);
 
-            return $stmt->execute([':id' => $id]);
+            return $stmt->execute([':IdUser' => $IdUser]);
         } catch (PDOException $error) {
             echo "Erreur de suppression : " . $error->getMessage();
             return FALSE;
         }
+    }
+
+    public function getCoursIdByUser($IdUser)
+    {
+        $query = $this->DB->prepare("SELECT aga_cours.IdCours as IdDesCours
+                        FROM aga_user 
+                        LEFT JOIN aga_relationuserpromo ON aga_user.IdUser = aga_relationuserpromo.IdUser 
+                        LEFT JOIN b6_promo ON aga_relationuserpromo.IdPromo = aga_promo.IdPromo
+                        LEFT JOIN aga_cours ON aga_promo.IdPromo = aga_cours.IdPromo
+                        WHERE TIME(NOW()) BETWEEN TIME(aga_cours.Debut) AND TIME(aga_cours.Fin)
+                        AND DATE(aga_cours.Debut) = CURDATE() AND aga_user.IdUser = :IdUser;
+                    ");
+        $query->bindParam(':IdUser', $IdUser);
+        $query->execute();
+        $resultat = $query->fetch(PDO::FETCH_OBJ);
+        return $resultat;
     }
 }

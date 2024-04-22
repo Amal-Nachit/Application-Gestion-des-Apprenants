@@ -1,4 +1,4 @@
-<main>
+<main class="connexionPage">
 <div class="h-screen md:flex items-center justify-center">
 <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
 	<div>
@@ -21,9 +21,9 @@
 				<input class="pl-2 outline-none border-none Password" type="password" name="Password" id="" placeholder="Mot de passe" />
       		</div>
       		<div class="md:flex items-center justify-center">
-	
-			<button id="btnregister" type="submit" class="block w-6/12 items-center bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2 onclick="Register()">Connexion</button>
+				<button id="btnregister" type="submit" class="block w-6/12 items-center bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2" onclick="Register()">Connexion</button>
 			</div>
 	</div>
+</div>
 </div>
 </main>

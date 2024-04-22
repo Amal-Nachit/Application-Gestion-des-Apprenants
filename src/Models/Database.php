@@ -1,5 +1,4 @@
 <?php
-
 namespace src\Models;
 
 use PDO;

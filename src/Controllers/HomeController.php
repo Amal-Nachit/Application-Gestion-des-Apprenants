@@ -16,13 +16,13 @@ class HomeController
     } else {
       $erreur = '';
     }
-    
-    $this->render("accueil", ["erreur"=> $erreur]);
+
+    $this->render("connexion", ["erreur" => $erreur]);
   }
 
 
   public function page404(): void
-  {    
+  {
     header("HTTP/1.1 404 Not Found");
     $this->render('404');
   }
